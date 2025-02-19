@@ -1,4 +1,10 @@
+
+# Import libraries
+import matplotlib.pyplot as plt
 import pandas as pd
+import pandas as pd
+
+################### BRIDGES ON WRONG LOCATION #######################
 #Read road and bridge file
 road = pd.read_csv('data/_roads.tsv', sep='\t')
 bridge = pd.read_csv("data/BMMS_overview.csv", delimiter=";")
@@ -80,26 +86,9 @@ bridge["lon"]=df_copy["lon"]
 
 
 
+############### REMOVING DUPLICATE BRIDGES #################### 
 
-
-# Code for removing duplicate bridges
-# assumes either loading the Xlsx file. Adapt to work further on already loaded DF us necessary
-
-# Import libraries
-import matplotlib.pyplot as plt
-import pandas as pd
-
-# Path for loading the data
-#path = './WBSIM_Lab1_2024/infrastructure/'
-#file_name = 'BMMS_overview.xlsx'
-
-#raw_data = pd.read_excel(path + file_name, na_values='.') # Load the data from the Excel file
-
-
-############### START OF RELEVANT ALGORTIHM #################### 
-
-
-# IMPORTANT: If copied in other code, either load xlsx file again or use the already loaded data in the dataframe
+# copy previously used dataframe
 df = bridge.copy() 
 
 # Make new column based in LRPName, first 3 letters of name and sub-division. Helps checking for the duplicates
@@ -131,8 +120,6 @@ df_notsorted = df_cleaned.drop(['EstimatedLoc_score', 'dup_code'], axis=1)
 # Sort the DataFrame by its index in ascending order
 df_final = df_notsorted.sort_index()
 
-
-########### ADD CODE HERE TO SAVE TO XLSXM FILE ####################
-# Overwrite a the excisting excel file
+# Overwrite the excisting excel file
 with pd.ExcelWriter("infrastructure/BMMS_overview.xlsx", mode="a", if_sheet_exists="replace") as writer:
     df_final.to_excel(writer, sheet_name="BMMS_overview", index=False)
