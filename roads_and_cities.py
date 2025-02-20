@@ -3,13 +3,10 @@ import pandas as pd
 from math import *
 import matplotlib.pyplot as plt
 
-# filepath = 'infrastructure\Roads_InfoAboutEachLRP.csv'
-# lrp_df = pd.read_csv(filepath)
-
-filepath2 = "infrastructure/_roads.tsv"
-
 filepath2 = "infrastructure/_roads.tsv"  # Correct relative path
 roads_df = pd.read_csv(filepath2, sep='\t', low_memory=False)
+
+# Change column names 
 
 # Get the existing column names as a list
 cols = list(roads_df.columns)
@@ -236,62 +233,48 @@ structured_continuous_roads_df = restructure_continuous_roads_with_unnamed(conti
 file_path = "infrastructure/_continuous_roads.tsv"
 structured_continuous_roads_df.to_csv(file_path, sep='\t', index=False)
 
-# # Extract latitude and longitude columns for Z roads
-# lat_cols = [col for col in z_roads_df.columns if col.startswith("lat")]
-# lon_cols = [col for col in z_roads_df.columns if col.startswith("lon")]
+### Plots ###
 
-# # Flatten the latitude and longitude values
-# z_lats = z_roads_df[lat_cols].values.flatten()
-# z_lons = z_roads_df[lon_cols].values.flatten()
+import matplotlib.pyplot as plt
+import numpy as np
 
-# # Remove NaN values
-# valid_points = ~np.isnan(z_lats) & ~np.isnan(z_lons)
-# z_lats = z_lats[valid_points]
-# z_lons = z_lons[valid_points]
+# Function to plot latitude vs longitude for a given road type
+def plot_road_lat_lon(ax, road_df, road_name, color):
+    """
+    Plots latitude (y-axis) vs longitude (x-axis) for a given road DataFrame on a given axis.
+    """
+    lat_cols = [col for col in road_df.columns if col.startswith("lat")]
+    lon_cols = [col for col in road_df.columns if col.startswith("lon")]
 
-# # Plot the latitude vs longitude for Z roads
-# plt.figure(figsize=(10, 6))
-# plt.plot(z_lons, z_lats, marker='o', linestyle='-', color='b', label="Z Roads")
+    # Flatten the latitude and longitude values
+    lats = road_df[lat_cols].values.flatten()
+    lons = road_df[lon_cols].values.flatten()
 
-# plt.xlabel("Longitude")
-# plt.ylabel("Latitude")
-# plt.title("Z Roads: Latitude vs Longitude")
-# plt.legend()
-# plt.grid()
-# plt.show()
+    # Remove NaN values
+    valid_points = ~np.isnan(lats) & ~np.isnan(lons)
+    lats = lats[valid_points]
+    lons = lons[valid_points]
 
-# # Function to plot latitude vs longitude for a given road type
-# def plot_road_lat_lon(road_df, road_name, color):
-#     """
-#     Plots latitude (y-axis) vs longitude (x-axis) for a given road DataFrame.
-#     """
-#     lat_cols = [col for col in road_df.columns if col.startswith("lat")]
-#     lon_cols = [col for col in road_df.columns if col.startswith("lon")]
+    # Plot
+    ax.plot(lons, lats, marker='o', linestyle='-', color=color, label=road_name)
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
+    ax.set_title(f"{road_name}: Latitude vs Longitude")
+    ax.legend()
+    ax.grid()
 
-#     # Flatten the latitude and longitude values
-#     lats = road_df[lat_cols].values.flatten()
-#     lons = road_df[lon_cols].values.flatten()
+# Create a figure with three subplots side by side
+fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
-#     # Remove NaN values
-#     valid_points = ~np.isnan(lats) & ~np.isnan(lons)
-#     lats = lats[valid_points]
-#     lons = lons[valid_points]
+# Plot for N roads
+plot_road_lat_lon(axes[0], n_roads_df, "N Roads", "r")
 
-#     # Plot
-#     plt.figure(figsize=(10, 6))
-#     plt.plot(lons, lats, marker='o', linestyle='-', color=color, label=road_name)
-#     plt.xlabel("Longitude")
-#     plt.ylabel("Latitude")
-#     plt.title(f"{road_name}: Latitude vs Longitude")
-#     plt.legend()
-#     plt.grid()
-#     plt.show()
+# Plot for R roads
+plot_road_lat_lon(axes[1], r_roads_df, "R Roads", "g")
 
-# # Plot for N roads
-# plot_road_lat_lon(n_roads_df, "N Roads", "r")
+# Plot for Z roads
+plot_road_lat_lon(axes[2], z_roads_df, "Z Roads", "b")
 
-# # Plot for R roads
-# plot_road_lat_lon(r_roads_df, "R Roads", "g")
-
-
-
+# Adjust layout
+plt.tight_layout()
+plt.show()
