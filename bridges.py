@@ -6,7 +6,7 @@ import pandas as pd
 
 ################### BRIDGES ON WRONG LOCATION #######################
 #Read road and bridge file
-road = pd.read_csv('data/_roads.tsv', sep='\t')
+road = pd.read_csv('infrastructure/_roads.tsv', sep='\t')
 bridge = pd.read_csv("data/BMMS_overview.csv", delimiter=";")
 #Merge road and bridge dataframe
 merged_df = bridge.merge(road, on=['road'], how='left')
