@@ -9,7 +9,7 @@ import pandas as pd
 ################### BRIDGES ON WRONG LOCATION #######################
 #Read road and bridge file
 road = pd.read_csv('data/_roads.tsv', sep='\t')
-bridge = pd.read_csv("data/BMMS_overview.csv", delimiter=";")
+bridge = pd.read_csv("data/BMMS_overview.csv", delimiter=";") #Reads a file where commas are replaced by dots to match the coordinates in the roads file
 #Merge road and bridge dataframe
 merged_df = bridge.merge(road, on=['road'], how='left')
 
