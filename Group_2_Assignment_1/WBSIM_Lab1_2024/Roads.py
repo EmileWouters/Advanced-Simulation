@@ -374,7 +374,7 @@ def create_continuous_road_df(road_name, lrps, lats, lons):
     """
     max_length = max(len(lrps), len(lats), len(lons))  # Find the longest list
     
-    # Ensure all lists are the same length by padding with NaN
+    # Ensure all lists are the same length by filling with NaN
     lrps.extend([None] * (max_length - len(lrps)))
     lats.extend([None] * (max_length - len(lats)))
     lons.extend([None] * (max_length - len(lons)))
@@ -398,7 +398,7 @@ z_roads_df = create_continuous_road_df('Z_continuous', z_lrps, z_lats, z_lons)
 # Concatenate into final continuous roads DataFrame
 continuous_roads_df = pd.concat([n_roads_df, r_roads_df, z_roads_df], ignore_index=True)
 
-# Function to restructure the DataFrame and name columns as per the requested format
+# Function to restructure the DataFrame to the _roads.tsv format with Unnamed columns
 def restructure_continuous_roads_with_unnamed(continuous_roads_df):
     """
     Restructures the DataFrame into the format: 
@@ -421,7 +421,7 @@ def restructure_continuous_roads_with_unnamed(continuous_roads_df):
 
         structured_data.append(structured_row)
     
-    # Create column names dynamically: road, lrp1, lat1, lon1, lrp2, lat2, lon2, ..., Unnamed: 7, Unnamed: 8, ...
+    # Create column names to the format of the same format as the _roads.tsv file
     max_length = max(len(row) for row in structured_data)
     base_columns = ['road', 'lrp1', 'lat1', 'lon1', 'lrp2', 'lat2', 'lon2']
     
@@ -439,48 +439,3 @@ structured_continuous_roads_df = restructure_continuous_roads_with_unnamed(conti
 # Save the structured DataFrame to a TSV file
 file_path = "infrastructure/_roads.tsv"
 structured_continuous_roads_df.to_csv(file_path, sep='\t', index=False)
-
-### Plots ###
-
-
-
-# Function to plot latitude vs longitude for a given road type
-def plot_road_lat_lon(ax, road_df, road_name, color):
-    """
-    Plots latitude (y-axis) vs longitude (x-axis) for a given road DataFrame on a given axis.
-    """
-    lat_cols = [col for col in road_df.columns if col.startswith("lat")]
-    lon_cols = [col for col in road_df.columns if col.startswith("lon")]
-
-    # Flatten the latitude and longitude values
-    lats = road_df[lat_cols].values.flatten()
-    lons = road_df[lon_cols].values.flatten()
-
-    # Remove NaN values
-    valid_points = ~np.isnan(lats) & ~np.isnan(lons)
-    lats = lats[valid_points]
-    lons = lons[valid_points]
-
-    # Plot
-    ax.plot(lons, lats, marker='o', linestyle='-', color=color, label=road_name)
-    ax.set_xlabel("Longitude")
-    ax.set_ylabel("Latitude")
-    ax.set_title(f"{road_name}: Latitude vs Longitude")
-    ax.legend()
-    ax.grid()
-
-# Create a figure with three subplots side by side
-fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-
-# Plot for N roads
-plot_road_lat_lon(axes[0], n_roads_df, "N Roads", "r")
-
-# Plot for R roads
-plot_road_lat_lon(axes[1], r_roads_df, "R Roads", "g")
-
-# Plot for Z roads
-plot_road_lat_lon(axes[2], z_roads_df, "Z Roads", "b")
-
-# Adjust layout
-plt.tight_layout()
-plt.show()
