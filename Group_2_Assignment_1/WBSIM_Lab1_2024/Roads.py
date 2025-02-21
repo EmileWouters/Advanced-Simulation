@@ -24,21 +24,6 @@ for i in range(1, len(row), 3):  # every 3rd column is latitude and longitude
     latitudes.append(row.iloc[i+1])   # Column i+1 is latitude
     longitudes.append(row.iloc[i+2])  # Column i+2 is longitude
 
-# Create the plot
-plt.figure(figsize=(8, 6))
-
-# Plot the road (first row)
-plt.plot(longitudes, latitudes, marker='o', markersize=5, linestyle='-', color='blue', alpha=0.7, label=f'{road_name}')
-
-# Customize the plot
-plt.title(f'Road: {road_name}')
-plt.xlabel('Longitude')
-plt.ylabel('Latitude')
-plt.grid(True)
-plt.legend()
-
-# Show the plot
-plt.show()
 
 
 
@@ -140,9 +125,6 @@ df_fixed.to_csv('data/_roads.tsv', sep='\t', index=False)
 print("Finished processing. Check 'fixed_roads.tsv' for the adjusted data.")
 
 
-
-
-
 def extract_coordinates_from_row(row, lrp_start_index=1):
     """
     Given a row from a DataFrame (with columns arranged in groups of three: [LRP name, latitude, longitude] 
@@ -196,17 +178,8 @@ def plot_road_comparison_by_index(row_index, roads, df_fixed, lrp_start_index=1)
     else:
         print("No valid coordinates found for the cleaned data.")
     
-    plt.title(f'Coordinate Comparison for Road: {road_name}')
-    plt.xlabel('Longitude')
-    plt.ylabel('Latitude')
-    plt.grid(True)
-    plt.legend()
-    plt.show()
+   
 
-# Example usage:
-# Assuming you have already loaded your DataFrames as 'roads' and 'df_fixed',
-# to compare the first row (index 0), run:
-#plot_road_comparison_by_index(24, roads, df_fixed)
 
 ############################ CONNECTING ROADS ######################################################################
 
